@@ -1,57 +1,31 @@
-
-
+enum CELL_TYPE { WALL, BLANK, HERO };
+enum DIRECTION {SCREEN_UP, SCREEN_DOWN, SCREEN_LEFT, SCREEN_RIGHT};
 class Cell {
- private:
+ public:
+  enum CELL_TYPE type;
+  enum DIRECTION dir;
   int x;
   int y;
-  Cell *left;
-  Cell *right;
-  Cell *top;
-  Cell *bottom;
 
- public:
-  Cell(int x, int y) {
+  Cell(int x, int y, enum CELL_TYPE type) {
+    this->type = type;
     this->x = x;
     this->y = y;
-    left = NULL;
-    right = NULL;
-    top = NULL;
-    bottom = NULL;
+    this->dir = SCREEN_UP;
   }
 
-  void Set(Cell *left, Cell *right, Cell *top, Cell *bottom) {
-    if (left) {
-      this->left = left;
-    }
-
-    if (right) {
-      this->right = right;
-    }
-
-    if (top) {
-      this->top = top;
-    }
-
-    if (bottom) {
-      this->bottom = bottom;
-    }
+  Cell(int x, int y, enum CELL_TYPE type, enum DIRECTION dir) {
+    this->type = type;
+    this->x = x;
+    this->y = y;
+    this->dir = dir;
   }
 
-  void UnSet(Cell *left, Cell *right, Cell *top, Cell *bottom) {
-    if (left) {
-      this->left = NULL;
-    }
-
-    if (right) {
-      this->right = NULL;
-    }
-
-    if (top) {
-      this->top = NULL;
-    }
-
-    if (bottom) {
-      this->bottom = NULL;
-    }
+  enum CELL_TYPE getType() {
+    return type;
   }
-}
+
+  enum DIRECTION getDir() {
+    return dir;
+  }
+};
