@@ -5,13 +5,19 @@
 #include <fstream>
 #include <string>
 
+enum HERO_MOVE {FORWARD, TURN_RIGHT, TURN_LEFT};
+
 class Maze {
  private:
   int length;
   int height;
   Cell *head;
   Cell ***mazeMap;
+  std::string mazeMapFilename;
   std::set<Room*> bag;
+
+  int heroX;
+  int heroY;
 
   void drawBorder() {
     for (int i = 0; i <= length; i++) {
@@ -55,6 +61,8 @@ class Maze {
         mazeMap[x][y]->type = X;
         break;
       case '>':
+        heroX = x;
+        heroY = y;
         mazeMap[x][y]->type = HERO;
         fs >> dir;
         switch(dir) {
@@ -80,7 +88,14 @@ class Maze {
  public:
 
   Maze(std::string fname) {
+    mazeMapFilename = fname;
     LoadMazeMap(fname);
+  }
+
+  void ReloadMazeMap() {
+    if (mazeMapFilename.length() > 0) {
+      LoadMazeMap(mazeMapFilename);
+    }
   }
 
   Maze(int length, int height) {
@@ -145,28 +160,76 @@ class Maze {
     Cell* c = mazeMap[x-1][y-1];
     c->type = HERO;
     c->dir = d;
+    heroX = x-1;
+    heroY = y-1;
     drawHero(x,y,d);
   }
 
   void MoveCursor(int x, int y, enum DIRECTION d) {
-    switch(d) {
-    case SCREEN_UP:
-      y = y - 1;
-      break;
-    case SCREEN_DOWN:
-      y = y + 1;
-      break;
-    case SCREEN_RIGHT:
-      x = x + 1;
-      break;
-    case SCREEN_LEFT:
-      x = x - 1;
-      break;
-    }
-
+    updateXYOnDirection(d,&x,&y);
     if (x > 0 && x < length && y > 0 && y < height) {
       move(y,x);
     }
+  }
+
+  void updateXYOnDirection(enum DIRECTION d, int *x, int *y) {
+    switch(d) {
+    case SCREEN_UP:
+      *y = *y - 1;
+      break;
+    case SCREEN_DOWN:
+      *y = *y + 1;
+      break;
+    case SCREEN_RIGHT:
+      *x = *x + 1;
+      break;
+    case SCREEN_LEFT:
+      *x = *x - 1;
+      break;
+    }
+  }
+
+  int MoveHero(enum HERO_MOVE m) {
+    Cell* heroCell = mazeMap[heroX][heroY];
+    enum DIRECTION turn[4] = {SCREEN_UP,SCREEN_RIGHT,SCREEN_DOWN,SCREEN_LEFT};
+    enum DIRECTION d = heroCell->dir;
+    int i = 0;
+
+    switch(m) {
+    case TURN_LEFT:
+    case TURN_RIGHT:
+      for (i = 0; i < 4; i++) {
+        if (turn[i] == d) {
+          break;
+        }
+      }
+      if (m == TURN_LEFT) {
+        if (i == 0) {
+          i = 3;
+        } else {
+          i = i - 1;
+        }
+      } else {
+        i = (i+ 1)%4;
+      }
+      PlaceHero(heroX+1,heroY+1,turn[i]);
+      break;
+    case FORWARD:
+      enum DIRECTION d = heroCell->dir;
+      int x = heroX;
+      int y = heroY;
+      updateXYOnDirection(d,&x,&y);
+      if ((x+1) > 0 && (x+1) < length && (y+1) > 0 && (y+1) < height) {
+        if (mazeMap[x][y]->type == BLANK) {
+          PlaceBlank(heroX+1,heroY+1);
+          PlaceHero(x+1,y+1,mazeMap[heroX][heroY]->dir);
+        } else {
+          return -1;
+        }
+      }
+      break;
+    }
+    return 0;
   }
 
   ~Maze() {
