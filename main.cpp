@@ -1,18 +1,13 @@
 #include <ncurses.h>
 #include "maze.h"
 #include <string>
+#include <unistd.h>
+#include <stdio.h>
 
+enum PROG_MODE { DRAW, SERVER } ProgMode;
 
-int main() {
-  WINDOW* mainWindow = initscr();
-  cbreak();
-  noecho();
-  keypad(mainWindow, TRUE);
-
-  Maze *M = new Maze(75,30);
-  M->Draw();
-  bool closeWindow = false;
- 
+void DrawMode(WINDOW* mainWindow, Maze* M) {
+  bool closeWindow = FALSE;
   while(int ch = getch()) {
     switch(ch) {
     case 'w':
@@ -62,5 +57,47 @@ int main() {
       refresh();
     }
   }
+}
+
+int main(int argc, char* argv[]) {
+  ProgMode = DRAW;
+  std::string fname("");
+  int ch;
+  while ((ch = getopt(argc, argv, "dsf:")) != -1) {
+    switch(ch) {
+    case 's':
+      ProgMode = SERVER;
+      break;
+    case 'd':
+      ProgMode = DRAW;
+      break;
+    case 'f':
+      fname = optarg;
+      break;
+    }
+  }
+
+
+  Maze *M;
+  if (fname.length() == 0) {
+    M = new Maze(75,30);
+  } else {
+    M = new Maze(fname);
+  }
+
+  WINDOW* mainWindow = initscr();
+  cbreak();
+  noecho();
+  keypad(mainWindow, TRUE);
+
+  M->Draw();
+  bool closeWindow = false;
+
+  if (ProgMode == DRAW) {
+    DrawMode(mainWindow, M);
+  } else {
+    /* FIXME */
+  }
+
   endwin();
 }

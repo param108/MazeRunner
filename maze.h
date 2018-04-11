@@ -94,22 +94,22 @@ class Maze {
         Cell *cell = mazeMap[i][j];
         switch(cell->type) {
         case WALL:
-          fs<<i<<" "<<j<<"#"<<std::endl;
+          fs<<i<<" "<<j<<" #"<<std::endl;
           break;
         case HERO:
-          fs<<i<<" "<<j<<">";
+          fs<<i<<" "<<j<<" >";
           switch(cell->dir) {
           case SCREEN_UP:
-            fs<<"u";
+            fs<<" u";
             break;
           case SCREEN_DOWN:
-            fs<<"d";
+            fs<<" d";
             break;
           case SCREEN_LEFT:
-            fs<<"l";
+            fs<<" l";
             break;
           case SCREEN_RIGHT:
-            fs<<"r";
+            fs<<" r";
             break;
           }
           fs<<std::endl;
