@@ -10,6 +10,9 @@ void DrawMode(WINDOW* mainWindow, Maze* M) {
   bool closeWindow = FALSE;
   while(int ch = getch()) {
     switch(ch) {
+    case 'x':
+      M->PlaceX(getcurx(mainWindow),getcury(mainWindow));
+      break;
     case 'w':
       M->PlaceWall(getcurx(mainWindow),getcury(mainWindow));
       break;

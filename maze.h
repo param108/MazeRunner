@@ -51,6 +51,9 @@ class Maze {
       case '#':
         mazeMap[x][y]->type = WALL;
         break;
+      case 'X':
+        mazeMap[x][y]->type = X;
+        break;
       case '>':
         mazeMap[x][y]->type = HERO;
         fs >> dir;
@@ -113,6 +116,10 @@ class Maze {
             break;
           }
           fs<<std::endl;
+          break;
+        case X:
+          fs<<i<<" "<<j<<" X"<<std::endl;
+          break;
         }
       }
     }
@@ -127,6 +134,11 @@ class Maze {
   void PlaceBlank(int x, int y) {
     mazeMap[x - 1][y - 1]->type = BLANK;
     drawBlank(x,y);
+  }
+
+  void PlaceX(int x, int y) {
+    mazeMap[x - 1][y - 1]->type = X;
+    drawX(x,y);
   }
 
   void PlaceHero(int x, int y, enum DIRECTION d) {
@@ -175,6 +187,11 @@ class Maze {
     move(y,x);
   }
 
+  void drawX(int x, int y) {
+    mvaddch(y,x,'X');
+    move(y,x);
+  }
+
   void drawHero(int x, int y, enum DIRECTION d) {
     mvaddch(y,x,getHeroIcon(d));
     move(y,x);
@@ -212,6 +229,9 @@ class Maze {
           break;
         case HERO:
           ch = getHeroIcon(mazeMap[i][j]->getDir());
+          break;
+        case X:
+          ch = 'X';
           break;
         }
         mvaddch(j+1,i+1,ch);
