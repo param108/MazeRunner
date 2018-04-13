@@ -1,3 +1,5 @@
 mazeServer
 mazemap.txt
 logstash.txt
+core
+*.pyc
