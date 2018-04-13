@@ -6,6 +6,11 @@
 #include <microhttpd.h>
 #include <iostream>
 #include <fstream>
+#include <string.h>
+#include "nlohmann/json.hpp"
+
+// for convenience
+using json = nlohmann::json;
 
 #define PAGE "<html>OK</html>"
 
@@ -69,6 +74,30 @@ void DrawMode(WINDOW* mainWindow, Maze* M) {
 
 struct MHD_Daemon* httpd;
 std::fstream *logfs;
+Maze* TheMaze;
+
+
+static const char* handle_request(const char * requestJson) {
+  json req = json::parse(requestJson);
+  std::string action = req["action"];
+  if (action == "FORWARD") {
+    if (TheMaze->MoveHero(FORWARD)<0) {
+      return "{\"status\": -1}";
+    }
+  }
+  if (action == "TURN_RIGHT") {
+    if (TheMaze->MoveHero(TURN_RIGHT)<0) {
+      return "{\"status\": -1}";
+    }
+  }
+  if (action == "TURN_LEFT") {
+    if (TheMaze->MoveHero(TURN_LEFT)<0) {
+      return "{\"status\": -1}";
+    }
+  }
+  refresh();
+  return ("{\"status\": 0}");
+}
 
 static int move_handler(void * cls,
                         struct MHD_Connection * connection,
@@ -79,7 +108,6 @@ static int move_handler(void * cls,
                         size_t * upload_data_size,
                         void ** ptr) {
   static int dummy;
-  std::string page((const char*)cls);
   struct MHD_Response * response;
   int ret;
 
@@ -88,43 +116,41 @@ static int move_handler(void * cls,
     return MHD_NO; /* unexpected method */
   }
 
-  if (&dummy != *ptr)
-    {
-      // The first time only the headers are valid,
-      //   do not respond in the first round...
-      (*logfs) << "Empty Response"<<std::endl;
-      *ptr = &dummy;
-      return MHD_YES;
-    }
-  if (0 == *upload_data_size) {
-    (*logfs)<<"invalid upload_data"<<std::endl;
-    return MHD_NO; /* no upload data in a POST? */
-  } else {
-    (*logfs)<<"Recieved:"<<upload_data<<" "<<page.length()<<std::endl;
+  if (*ptr == NULL) {
+    // The first time only the headers are valid,
+    //   do not respond in the first round...
+    *ptr = new char[100];
+    return MHD_YES;
   }
-  *ptr = NULL; /* clear context pointer */
-  response = MHD_create_response_from_buffer (page.length(),
-                                              (void*) page.c_str(),
-                                              MHD_RESPMEM_MUST_COPY);
-  MHD_add_response_header (response,
-                                  MHD_HTTP_HEADER_CONTENT_TYPE,
-                                  "application/json");
 
-  (*logfs)<<page<<std::endl;
+  if (*upload_data_size > 0) {
+    strcpy((char*)*ptr, handle_request(upload_data));
+    *upload_data_size = 0;
+    return MHD_YES;
+  }
+
+  response = MHD_create_response_from_buffer (strlen((char*)*ptr),
+                                              *ptr,
+                                              MHD_RESPMEM_MUST_COPY);
   if (response == NULL) {
     (*logfs)<<"response is NULL"<<std::endl;
+    return MHD_NO;
   }
+  ret = MHD_add_response_header (response,
+                                 MHD_HTTP_HEADER_CONTENT_TYPE,
+                                 "application/json");
   ret = MHD_queue_response(connection,
                            MHD_HTTP_OK,
-                           response);
+                           response); 
   MHD_destroy_response(response);
-  (*logfs)<<"Sent response"<<ret<<std::endl;
-  return ret;
+  delete((char*)*ptr);
+
+  return MHD_YES;
 }
 
 int createServerThreads(std::string port, char *page) {
   logfs= new std::fstream("logstash.txt",std::fstream::out|std::fstream::app);
-  httpd = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION,
+  httpd = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY|MHD_USE_DEBUG,
                            atoi(port.c_str()),
                            NULL,
                            NULL,
@@ -135,6 +161,8 @@ int createServerThreads(std::string port, char *page) {
     (*logfs)<<"Failed to create server"<<std::endl;
     return -1;
   }
+
+  MHD_run(httpd);
 }
 
 char defaultPage[] = "<http>OK</http>";
@@ -146,6 +174,8 @@ void ServerMode(WINDOW* mainWindow, Maze* M, std::string port) {
     logfs->close();
     return;
   }
+
+  TheMaze = M;
 
   while(int ch = getch()) {
     switch(ch) {
