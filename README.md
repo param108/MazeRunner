@@ -104,7 +104,7 @@ In this mode, you will see the maze you loaded, but now using the cursor moves t
 
 Allowed commands
 1. `up arrow key` - move hero up if possible
-1. `left arrow key` - turn the hero to *his* left
+1. `left arrow key` - turn the hero to *her* left
 1. `right arrow key` - turn the hero to *his* right
 1. `q` - quit
 1. `z` - reset the maze to initial condition
@@ -115,7 +115,7 @@ Allowed commands
 3 commands are provided
 1. f() - move one step in the direction the hero is facing. 
 1. l() - turn hero to _his_ left
-1. r() - turn hero to _his_ right
+1. r() - turn hero to _her_ right
 
 When you run the code written by your child it will do each step after a delay of one second and print out what it is doing. This allows your child to turn to the server window and see their commands executing. You may need to tell them what to look for.
 
