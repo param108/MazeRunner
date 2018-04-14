@@ -44,11 +44,14 @@ Run this command to build the mazeServer executable
 ` make mazeServer`
 
 ### Modus Operandi
+
+![mazerunnertotalsetup](https://user-images.githubusercontent.com/331871/38767497-14063036-4000-11e8-911f-2a2e4a274aa2.png)
+
 1. Open the mazeServer in a large terminal (greater than 75 columns and 35 rows). 
 2. Generate the maze using `DRAW` mode below Or just use an existing lesson.
 3. Run the mazeServer in server mode specifying the maze file you want to try.
 4. Copy the `template.py` to file of your choice in the same directory and open it in an editor. The editor should be simple enough for your child to save and edit. I used `gnome-text-editor` because it  has a nice big `save` button.
-5. Open one more terminal (can have just 3 lines) and navigate to the python directory.
+5. Open one more terminal (can have just 3 lines) and navigate to the python directory in the repository.
 6. Once your child has made her first edits just run the following command.
 
 `python <filename>`
