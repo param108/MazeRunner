@@ -85,7 +85,7 @@ Commands available are single key commands (all commands are lowercase letters)
 1. `d` place the hero at the cursor facing  down 'v'
 1. `l` place the hero at the cursor facing left '<'
 1. `r` place the hero at the cursor facing right '>'
-1. `<SPC>` place a blank at the cursor ' '
+1. `<SPC>` place a blank at the cursor ' ' use this to remove a misplaced hero or wall.
 1. `w` place a wall segment at cursor '#'
 1. `s` save the maze to the file mentioned in `-f` argument or `mazemap.txt`
 1. `z` refresh the screen
