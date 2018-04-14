@@ -223,6 +223,8 @@ class Maze {
         if (mazeMap[x][y]->type == BLANK) {
           PlaceBlank(heroX+1,heroY+1);
           PlaceHero(x+1,y+1,mazeMap[heroX][heroY]->dir);
+        } else if (mazeMap[x][y]->type == X) {
+          return 1;
         } else {
           return -1;
         }

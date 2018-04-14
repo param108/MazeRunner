@@ -2,29 +2,52 @@ import httplib
 import json
 import commands
 
-def FORWARD():
-    ret = commands.FORWARD()
-    if ret == -1:
-        print "Can't go that way!"
-        sys.exit(-1)
+def f():
+    commands.FORWARD()
 
 
-def TURN_RIGHT():
-    ret = commands.TURN_RIGHT()
-    if ret == -1:
-        print "Can't go that way!"
-        sys.exit(-1)
-
-def TURN_LEFT():
-    ret = commands.TURN_LEFT()
-    if ret  == -1:
-        print "Can't go that way!"
-        sys.exit(-1)
+def r():
+    commands.TURN_RIGHT()
+    
+def l():
+    commands.TURN_LEFT()
 
 
+for i in range(0, 15):
+    f()
+
+l()
+
+for i in range(0,15):
+    f()
+
+l()
+
+for i  in range (0,17):
+    f()
+
+r()
+
+for i in range(0,19):
+    f()
 
 
+r()
 
-FORWARD()
-FORWARD()
-TURN_LEFT()
+for i in range(0,23):
+    f()
+
+l() 
+
+for i in range(0,21):
+    f()
+
+l()
+
+for i in range(0,21):
+    f()
+
+r()
+
+for i in range(0,4):
+    f()

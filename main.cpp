@@ -13,6 +13,10 @@
 using json = nlohmann::json;
 
 #define PAGE "<html>OK</html>"
+struct MHD_Daemon* httpd;
+std::fstream *logfs;
+Maze* TheMaze;
+std::string LoadedFileName;
 
 enum PROG_MODE { DRAW, SERVER } ProgMode;
 
@@ -51,7 +55,7 @@ void DrawMode(WINDOW* mainWindow, Maze* M) {
       M->MoveCursor(getcurx(mainWindow),getcury(mainWindow),SCREEN_RIGHT);
       break;
     case 's':
-      M->SaveMazeMap(std::string("mazemap.txt"));
+      M->SaveMazeMap(std::string(LoadedFileName));
       break;
     case 'q':
       closeWindow = TRUE;
@@ -72,31 +76,28 @@ void DrawMode(WINDOW* mainWindow, Maze* M) {
   }
 }
 
-struct MHD_Daemon* httpd;
-std::fstream *logfs;
-Maze* TheMaze;
 
 
-static const char* handle_request(const char * requestJson) {
+static json handle_request(const char * requestJson) {
   json req = json::parse(requestJson);
   std::string action = req["action"];
+  int ret = 0;
+
   if (action == "FORWARD") {
-    if (TheMaze->MoveHero(FORWARD)<0) {
-      return "{\"status\": -1}";
-    }
+    ret = TheMaze->MoveHero(FORWARD);
   }
+
   if (action == "TURN_RIGHT") {
-    if (TheMaze->MoveHero(TURN_RIGHT)<0) {
-      return "{\"status\": -1}";
-    }
+    ret = TheMaze->MoveHero(TURN_RIGHT);
   }
+
   if (action == "TURN_LEFT") {
-    if (TheMaze->MoveHero(TURN_LEFT)<0) {
-      return "{\"status\": -1}";
-    }
+    ret = TheMaze->MoveHero(TURN_LEFT);
   }
+
   refresh();
-  return ("{\"status\": 0}");
+  req["status"] = ret;
+  return req;
 }
 
 static int move_handler(void * cls,
@@ -124,7 +125,7 @@ static int move_handler(void * cls,
   }
 
   if (*upload_data_size > 0) {
-    strcpy((char*)*ptr, handle_request(upload_data));
+    strcpy((char*)*ptr, handle_request(upload_data).dump().c_str());
     *upload_data_size = 0;
     return MHD_YES;
   }
@@ -150,7 +151,7 @@ static int move_handler(void * cls,
 
 int createServerThreads(std::string port, char *page) {
   logfs= new std::fstream("logstash.txt",std::fstream::out|std::fstream::app);
-  httpd = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY|MHD_USE_DEBUG,
+  httpd = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY,
                            atoi(port.c_str()),
                            NULL,
                            NULL,
@@ -207,9 +208,11 @@ void ServerMode(WINDOW* mainWindow, Maze* M, std::string port) {
   logfs->close();
 }
 
+
 int main(int argc, char* argv[]) {
   ProgMode = DRAW;
-  std::string fname("");
+  LoadedFileName = "mazemap.txt";
+  bool filenameGiven = false;
   std::string port("8080");
   int ch;
   while ((ch = getopt(argc, argv, "dsf:p:")) != -1) {
@@ -221,7 +224,8 @@ int main(int argc, char* argv[]) {
       ProgMode = DRAW;
       break;
     case 'f':
-      fname = optarg;
+      filenameGiven = true;
+      LoadedFileName = optarg;
       break;
     case 'p':
       port = optarg;
@@ -230,10 +234,10 @@ int main(int argc, char* argv[]) {
 
 
   Maze *M;
-  if (fname.length() == 0) {
+  if (!filenameGiven) {
     M = new Maze(75,30);
   } else {
-    M = new Maze(fname);
+    M = new Maze(LoadedFileName);
   }
 
   WINDOW* mainWindow = initscr();

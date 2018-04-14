@@ -1,9 +1,22 @@
 import httplib
 import json
 import time
+import sys
 
+MOVE_DELAY = 1
 
-MOVE_DELAY = 3
+def ReturnHandler(status):
+    if status == -1:
+        print "Cant move that way"
+        sys.exit(-1)
+
+    if status == 1:
+        print "Well done!"
+        sys.exit(1)
+
+    if status == 0:
+        return 0
+
 
 def FORWARD():
     print("MOVING FORWARD")
@@ -13,7 +26,7 @@ def FORWARD():
     resp = conn.getresponse()
     data = resp.read()
     obj = json.loads(data)
-    return obj["status"]
+    return ReturnHandler(obj["status"])
 
 def TURN_RIGHT():
     print("TURNING RIGHT")
@@ -23,7 +36,7 @@ def TURN_RIGHT():
     resp = conn.getresponse()
     data = resp.read()
     obj = json.loads(data)
-    return obj["status"]
+    return ReturnHandler(obj["status"])
 
 def TURN_LEFT():
     print("TURNING LEFT")
@@ -33,4 +46,4 @@ def TURN_LEFT():
     resp = conn.getresponse()
     data = resp.read()
     obj = json.loads(data)
-    return obj["status"]
+    return ReturnHandler(obj["status"])
