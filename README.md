@@ -52,11 +52,13 @@ Run this command to build the mazeServer executable
 3. Run the mazeServer in server mode specifying the maze file you want to try.
 4. Copy the `template.py` to file of your choice in the same directory and open it in an editor. The editor should be simple enough for your child to save and edit. I used `gnome-text-editor` because it  has a nice big `save` button.
 5. Open one more terminal (can have just 3 lines) and navigate to the python directory in the repository.
-6. Once your child has made her first edits just run the following command.
+6. Once your child has made her first edits  and saved just run the following command.
 
 `python <filename>`
 
 7. You should see the hero move.
+8. After discussing what needs to change or what more needs to be done, reset the mazeServer by pressing `z`
+9. Ask your child to make more changes and go to step (6).
 
 
 ### Components
