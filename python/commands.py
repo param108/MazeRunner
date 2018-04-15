@@ -47,3 +47,12 @@ def TURN_LEFT():
     data = resp.read()
     obj = json.loads(data)
     return ReturnHandler(obj["status"])
+
+def WHATS_NEXT():
+    conn  = httplib.HTTPConnection("localhost",8080)
+    conn.request("POST","localhost:8080","{\"action\":\"WHATS_NEXT\"}")
+    resp = conn.getresponse()
+    data = resp.read()
+    obj = json.loads(data)
+    return obj["next"]
+

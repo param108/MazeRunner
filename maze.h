@@ -189,6 +189,20 @@ class Maze {
     }
   }
 
+  // assumes hero is always within the border.
+  std::string NextCell() {
+    int x,y;
+    x = this->heroX;
+    y = this->heroY;
+    Cell* heroCell = mazeMap[this->heroX][this->heroY];
+    updateXYOnDirection(heroCell->dir, &x, &y);
+    if (x >= (this->length-1) || y >= (this->height-1)) {
+      return cellTypeToString(WALL);
+    }
+
+    return cellTypeToString(mazeMap[x][y]->type);
+  }
+
   int MoveHero(enum HERO_MOVE m) {
     Cell* heroCell = mazeMap[heroX][heroY];
     enum DIRECTION turn[4] = {SCREEN_UP,SCREEN_RIGHT,SCREEN_DOWN,SCREEN_LEFT};

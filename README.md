@@ -22,12 +22,18 @@ The server shows a simple maze view where '#' are walls, 'X' is the destination 
 "action":"TURN_RIGHT"
 }
 ```
-
+4. `WHATS_NEXT`
+```
+{
+"action":"WHATS_NEXT"
+}
+```
 Accordingly the server moves the hero on the screen if possible and returns a response of the form
 ```
 {
 "action":"TURN_RIGHT",   // whatever was sent by the client
-"status": [0|1|-1]
+"status": [0|1|-1],
+"next": ["WALL"|"X"|"BLANK"|"HERO"] // only for WHATS_NEXT
 }
 ```
 
@@ -105,7 +111,7 @@ In this mode you can create the gameboard
 In this mode, you will see the maze you loaded, but now using the cursor moves the *Hero* '>'. The server will also start listening on 8080 port for commands (as mentioned in the first part of this readme)
 
 Allowed commands
-1. `up arrow key` - move hero up if possible
+1. `up arrow key` - move hero forward if possible
 1. `left arrow key` - turn the hero to *her* left
 1. `right arrow key` - turn the hero to *his* right
 1. `q` - quit
@@ -114,10 +120,11 @@ Allowed commands
 #### Python templates
 `commands.py`, `template.py` These provide the python interface to send commands to the server. You should copy template.py to a new file when your child takes up a maze challenge.
 
-3 commands are provided
+4 commands are provided
 1. f() - move one step in the direction the hero is facing. 
 1. l() - turn hero to _his_ left
 1. r() - turn hero to _her_ right
+1. whats_next() - returns the item in the block in front of the hero. Returns a string "HERO","WALL","BLANK","X". "X"" is the destination
 
 When you run the code written by your child it will do each step after a delay of one second and print out what it is doing. This allows your child to turn to the server window and see their commands executing. You may need to tell them what to look for.
 

@@ -85,17 +85,24 @@ static json handle_request(const char * requestJson) {
 
   if (action == "FORWARD") {
     ret = TheMaze->MoveHero(FORWARD);
+    refresh();
   }
 
   if (action == "TURN_RIGHT") {
     ret = TheMaze->MoveHero(TURN_RIGHT);
+    refresh();
   }
 
   if (action == "TURN_LEFT") {
     ret = TheMaze->MoveHero(TURN_LEFT);
+    refresh();
   }
 
-  refresh();
+  if (action == "WHATS_NEXT") {
+    ret = 0;
+    req["next"] = TheMaze->NextCell();
+  }
+
   req["status"] = ret;
   return req;
 }
