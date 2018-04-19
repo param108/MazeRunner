@@ -135,6 +135,8 @@ class Maze {
         case X:
           fs<<i<<" "<<j<<" X"<<std::endl;
           break;
+        case BLANK:
+          break;
         }
       }
     }

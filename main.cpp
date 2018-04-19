@@ -171,6 +171,7 @@ int createServerThreads(std::string port, char *page) {
   }
 
   MHD_run(httpd);
+  return 0;
 }
 
 char defaultPage[] = "<http>OK</http>";

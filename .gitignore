@@ -3,3 +3,4 @@ mazemap.txt
 logstash.txt
 core
 *.pyc
+mazeServer.dSYM
