@@ -43,6 +43,7 @@ class Maze {
 
 
   void LoadMazeMap(std::string fname) {
+
     std::fstream fs(fname,std::fstream::in);
     fs>>this->length>>this->height;
 
@@ -98,10 +99,11 @@ class Maze {
     }
   }
 
-  Maze(int length, int height) {
+  Maze(int length, int height, std::string fname) {
     this->length = length;
     this->height = height;
     allocateMazeMap();
+    mazeMapFilename = fname;
   }
 
   void SaveMazeMap(std::string fname) {

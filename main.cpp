@@ -220,7 +220,7 @@ void ServerMode(WINDOW* mainWindow, Maze* M, std::string port) {
 int main(int argc, char* argv[]) {
   ProgMode = DRAW;
   LoadedFileName = "mazemap.txt";
-  bool filenameGiven = false;
+  bool filenameRecvd = false;
   std::string port("8080");
   int ch;
   while ((ch = getopt(argc, argv, "dsf:p:")) != -1) {
@@ -232,7 +232,7 @@ int main(int argc, char* argv[]) {
       ProgMode = DRAW;
       break;
     case 'f':
-      filenameGiven = true;
+      filenameRecvd = true;
       LoadedFileName = optarg;
       break;
     case 'p':
@@ -240,12 +240,17 @@ int main(int argc, char* argv[]) {
     }
   }
 
-
+  
   Maze *M;
-  if (!filenameGiven) {
-    M = new Maze(75,30);
+  if (!filenameRecvd) {
+    M = new Maze(75,30,LoadedFileName);
   } else {
-    M = new Maze(LoadedFileName);
+    std::fstream fs(LoadedFileName,std::ios::in);
+    if (fs.good()) {
+      M = new Maze(LoadedFileName);
+    } else {
+      M = new Maze(75,30,LoadedFileName);
+    }
   }
 
   WINDOW* mainWindow = initscr();
