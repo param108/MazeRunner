@@ -135,4 +135,4 @@ The idea is to generate more mazes and lesson plans. The available lessons so fa
 Simple use of commands and importance of sequence in commands.
 
 2. lesson 2: loops
-I told my daughter about simple range based for loops and she decided how many steps are required. The file `first.py` is her solution to the first problem.
+I told my daughter about simple range based for loops and she decided how many steps are required. The file `first.py` is her solution to the first problem (maze2a.txt).
